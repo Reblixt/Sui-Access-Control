@@ -1,6 +1,6 @@
 #[test_only]
-module access_controll::access_controll_tests {
-    use access_controll::access_controll::{Self as controll, SRoles, AdminCap, OwnerCap};
+module access_control::access_control_tests {
+    use access_control::access_control::{Self as controll, SRoles, AdminCap, OwnerCap};
     use sui::{test_scenario::{Self as scen, begin, end, ctx}, test_utils::assert_eq};
 
     const OWNER: address = @0xA;

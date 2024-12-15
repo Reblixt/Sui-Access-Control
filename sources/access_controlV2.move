@@ -1,4 +1,4 @@
-module access_controll::access_controllV2 {
+module access_control::access_controlV2 {
     use sui::vec_map::{Self, VecMap};
 
     public struct SRoles has key {
