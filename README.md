@@ -39,7 +39,7 @@ A "role capability" object parameterized by a phantom type T. Each RoleCap repre
     //OwnerCap can add new roles.
 
     remove_role_cap(owner_cap: &OwnerCap, roles: &mut SRoles, role_id: ID)
-    // Removes a role from the system. Only the holder of the OwnerCap can remove roles.
+    // Removes a role from the access. Only the holder of the OwnerCap can remove roles. 
 
     has_cap_access<T: key>(roles: &SRoles, role_cap: &RoleCap<T>): bool
     // Checks if a given role capability is currently active and has access rights. 
