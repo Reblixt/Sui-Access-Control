@@ -83,9 +83,9 @@ const ENotAuthorized: u64 = 1;
     access_controlV2::add_role<MyOwnRole>(owner_cap, roles, recipient, ctx);
     }
 
-    public fun do_something(owner_cap: &OwnerCap, roles: &mut SRoles, role_cap: &RoleCap<MyOwnRole>, ctx: &mut TxContext) {
+    public fun do_something(owner_cap: &OwnerCap, roles: &SRoles, role_cap: &RoleCap<MyOwnRole>, ctx: &mut TxContext) {
     // Check if the sender has the Admin role
-    assert!(access_controlV2::has_cap_access(roles, role_cap), ENotAuthorized);
+    assert!(access_controlV2::has_cap_access<MyOwnRole>(roles, role_cap), ENotAuthorized);
     // Perform the action
     // ...
     }
