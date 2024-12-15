@@ -62,7 +62,7 @@ A "role capability" object parameterized by a phantom type T. Each RoleCap repre
 
 ```rust
 module something::somethings {
-use access_control::access_controlV2;
+use access_control::access_controlV2::{Self, OwnerCap, RoleCap, SRoles};
 
 const ENotAuthorized: u64 = 1;
 
@@ -83,7 +83,7 @@ const ENotAuthorized: u64 = 1;
     access_controlV2::add_role<MyOwnRole>(owner_cap, roles, recipient, ctx);
     }
 
-    public fun do_something(owner_cap: &OwnerCap, roles: &mut SRoles, role_cap: &RoleCap<Admin>, ctx: &mut TxContext) {
+    public fun do_something(owner_cap: &OwnerCap, roles: &mut SRoles, role_cap: &RoleCap<MyOwnRole>, ctx: &mut TxContext) {
     // Check if the sender has the Admin role
     assert!(access_controlV2::has_cap_access(roles, role_cap), ENotAuthorized);
     // Perform the action
