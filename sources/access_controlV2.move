@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 module access_control::access_controlV2 {
-    use sui::vec_map::{Self, VecMap};
+    use sui::{event::emit, vec_map::{Self, VecMap}};
 
     public struct SRoles has key {
         id: UID,
@@ -16,8 +16,26 @@ module access_control::access_controlV2 {
         id: UID,
     }
 
+    /// This is the OwnerCap if for modifie SRoles shared object
     public struct OwnerCap has key {
         id: UID,
+    }
+
+    // ======================== Events ========================
+
+    public struct RoleAddedEvent has copy, drop {
+        owner: address,
+        roleId: ID,
+    }
+
+    public struct RoleRevokedEvent has copy, drop {
+        owner: address,
+        roleId: ID,
+    }
+
+    public struct RoleDeletedEvent has copy, drop {
+        owner: address,
+        roleId: ID,
     }
 
     /// @notice Creates a new access control shared object and transfers ownership
@@ -51,6 +69,11 @@ module access_control::access_controlV2 {
         vec_map::insert(&mut roles.role, adminCapId, true);
 
         transfer::transfer(adminCap, recipient);
+
+        emit(RoleAddedEvent {
+            owner: tx_context::sender(ctx),
+            roleId: adminCapId,
+        });
     }
 
     /// @dev Only the owner can remove a role
@@ -58,8 +81,18 @@ module access_control::access_controlV2 {
     /// @param _ The owner capability reference
     /// @param roles The shared object that contains the roles
     /// @param adminCapId The ID of the role capability to be removed
-    public fun revoke_role_access(_: &OwnerCap, roles: &mut SRoles, adminCapId: ID) {
+    public fun revoke_role_access(
+        _: &OwnerCap,
+        roles: &mut SRoles,
+        adminCapId: ID,
+        ctx: &TxContext,
+    ) {
         vec_map::remove(&mut roles.role, &adminCapId);
+
+        emit(RoleRevokedEvent {
+            owner: tx_context::sender(ctx),
+            roleId: adminCapId,
+        });
     }
 
     /// @notice Checks if a role has access to a specific capability
@@ -78,10 +111,15 @@ module access_control::access_controlV2 {
     /// It will remove the role capability from the roles shared object and delete the role capability
     /// @param roles The shared object that contains the roles
     /// @param roleCap The role capability to be deleted
-    entry fun delete_cap<T: key>(roles: &mut SRoles, roleCap: RoleCap<T>) {
+    entry fun delete_cap<T: key>(roles: &mut SRoles, roleCap: RoleCap<T>, ctx: &TxContext) {
         let roleCapId: ID = object::id(&roleCap);
         vec_map::remove(&mut roles.role, &roleCapId);
         let RoleCap<T> { id } = roleCap;
         object::delete(id);
+
+        emit(RoleDeletedEvent {
+            owner: tx_context::sender(ctx),
+            roleId: roleCapId,
+        });
     }
 }
