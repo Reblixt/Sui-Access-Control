@@ -50,7 +50,7 @@ module access_control::access_controlV2_tests {
         assert_eq(tructhy_admin, true);
 
         scen::next_tx(&mut scenario, OWNER);
-        controll::remove_role_cap(&oc, &mut s_roles, adminCapId);
+        controll::revoke_role_access(&oc, &mut s_roles, adminCapId);
 
         scen::next_tx(&mut scenario, ADMIN);
         let falsy_admin = controll::has_cap_access<AdminRole>(&s_roles, &adminCap);

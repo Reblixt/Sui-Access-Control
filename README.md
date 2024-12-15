@@ -38,8 +38,8 @@ A "role capability" object parameterized by a phantom type T. Each RoleCap repre
     // Assigns a new role capability to a specified recipient. Only the holder of the 
     //OwnerCap can add new roles.
 
-    remove_role_cap(owner_cap: &OwnerCap, roles: &mut SRoles, role_id: ID)
-    // Removes a role from the access. Only the holder of the OwnerCap can remove roles. 
+    revoke_role_access(owner_cap: &OwnerCap, roles: &mut SRoles, role_id: ID)
+    // Revoke a role from the access. Only the holder of the OwnerCap can remove roles. 
 
     has_cap_access<T: key>(roles: &SRoles, role_cap: &RoleCap<T>): bool
     // Checks if a given role capability is currently active and has access rights. 
@@ -90,9 +90,9 @@ const ENotAuthorized: u64 = 1;
     // ...
     }
 
-    public fun remove_role(owner_cap: &OwnerCap, roles: &mut SRoles, role_id: UID, ctx: &mut TxContext) {
+    public fun revoke_role(owner_cap: &OwnerCap, roles: &mut SRoles, role_id: UID, ctx: &mut TxContext) {
     // Remove a role from the system
-    access_controlV2::remove_role_cap(owner_cap, roles, role_id);
+    access_controlV2::revoke_role_access(owner_cap, roles, role_id);
     }
 
 }

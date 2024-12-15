@@ -52,11 +52,11 @@ module access_control::access_controlV2 {
     }
 
     /// @dev Only the owner can remove a role
-    /// @notice Removes a role from the access control system
+    /// @notice Revoke a role from the access control system
     /// @param _ The owner capability reference
     /// @param roles The shared object that contains the roles
     /// @param adminCapId The ID of the role capability to be removed
-    public fun remove_role_cap(_: &OwnerCap, roles: &mut SRoles, adminCapId: ID) {
+    public fun revoke_role_access(_: &OwnerCap, roles: &mut SRoles, adminCapId: ID) {
         vec_map::remove(&mut roles.role, &adminCapId);
     }
 
