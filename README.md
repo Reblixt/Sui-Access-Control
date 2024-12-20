@@ -62,25 +62,26 @@ A "role capability" object parameterized by a phantom type T. Each RoleCap repre
 
 ```rust
 module something::somethings {
-use access_control::access_controlV2::{Self, OwnerCap, RoleCap, SRoles};
+use access_control::access_control::{Self, OwnerCap, RoleCap, SRoles};
 
 const ENotAuthorized: u64 = 1;
 
     // Need to have a key ability!
     public struct MyOwnRole has key {
     id: UID, 
-    // all other fields you need
     }
+    // Name of the project that will represent the Roles and OwnerCap
+    public struct Project {}
 
     fun init(ctx: &mut TxContext) {
     // Initialize the access control mechanism
-    access_controlV2::new(ctx);
+    access_controlV2::new<Project>(ctx);
     // OwnerCap is minted and transferred to the transaction sender (ctx)
     }
 
-    public fun create_role(owner_cap: &OwnerCap, roles: &mut SRoles, recipient: address, ctx: &mut TxContext) {
+    public fun create_role(owner_cap: &OwnerCap<Project>, roles: &mut SRoles, recipient: address, ctx: &mut TxContext) {
     // Create a new role capability and assign it to the recipient
-    access_controlV2::add_role<MyOwnRole>(owner_cap, roles, recipient, ctx);
+    access_controlV2::add_role<MyOwnRole, Project>(owner_cap, roles, recipient, ctx);
     }
 
     public fun do_something(owner_cap: &OwnerCap, roles: &SRoles, role_cap: &RoleCap<MyOwnRole>, ctx: &mut TxContext) {
@@ -92,7 +93,7 @@ const ENotAuthorized: u64 = 1;
 
     public fun revoke_role(owner_cap: &OwnerCap, roles: &mut SRoles, role_id: UID, ctx: &mut TxContext) {
     // Remove a role from the system
-    access_controlV2::revoke_role_access(owner_cap, roles, role_id);
+    access_controlV2::revoke_role_access<Project>(owner_cap, roles, role_id);
     }
 
 }
