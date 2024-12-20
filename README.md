@@ -1,3 +1,19 @@
+# Update 2024-12-20
+Patched a security vulnarability in the OwnerCap.
+
+Now you need to add a Type specific to your Dapp/Project when you call the `new` function. 
+So the ownercap is tied to the specific project. 
+
+```rust
+    public struct Project {}
+
+    fun init(ctx: &mut TxContext) {
+    // Initialize the access control mechanism
+    access_controlV2::new<Project>(ctx);
+    // OwnerCap is minted and transferred to the transaction sender (ctx)
+    }
+```
+
 # Sui-Access-Control
 This repository contains a Sui Move module that implements a simple, flexible, and free-to-use role-based access control mechanism on the Sui network. The `Sui-access-control` module allows for granular permissions management by creating, assigning, and revoking "capabilities" represented by roles, all governed by an on-chain "owner" entity.
 
