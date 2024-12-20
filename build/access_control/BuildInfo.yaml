@@ -2,17 +2,17 @@
 compiled_package_info:
   package_name: access_control
   address_alias_instantiation:
-    access_control: 7a39c2d771d133963765e2525c1716b7dd658b1af065ab03300ff26e3edd2d74
+    access_control: "0000000000000000000000000000000000000000000000000000000000000000"
     std: "0000000000000000000000000000000000000000000000000000000000000001"
     sui: "0000000000000000000000000000000000000000000000000000000000000002"
-  source_digest: C918178D6E1B90FD9AC33634C7C3CB0980DF4DD9C2F4945BA10553B6A7703514
+  source_digest: D7DB2036AE00A8A4F400D854C70431F825DF32C6B3A7288544A24C223FFB8F3A
   build_flags:
-    dev_mode: true
-    test_mode: true
+    dev_mode: false
+    test_mode: false
     generate_docs: false
     install_dir: ~
     force_recompilation: false
-    lock_file: ~
+    lock_file: "./Move.lock"
     fetch_deps_only: false
     skip_fetch_latest_git_deps: false
     default_flavor: sui
