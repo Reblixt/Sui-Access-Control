@@ -9,7 +9,7 @@ So the ownercap is tied to the specific project.
 
     fun init(ctx: &mut TxContext) {
     // Initialize the access control mechanism
-    access_controlV2::new<Project>(ctx);
+    access_control::new<Project>(ctx);
     // OwnerCap is minted and transferred to the transaction sender (ctx)
     }
 ```
@@ -91,25 +91,25 @@ const ENotAuthorized: u64 = 1;
 
     fun init(ctx: &mut TxContext) {
     // Initialize the access control mechanism
-    access_controlV2::new<Project>(ctx);
+    access_control::new<Project>(ctx);
     // OwnerCap is minted and transferred to the transaction sender (ctx)
     }
 
     public fun create_role(owner_cap: &OwnerCap<Project>, roles: &mut SRoles, recipient: address, ctx: &mut TxContext) {
     // Create a new role capability and assign it to the recipient
-    access_controlV2::add_role<MyOwnRole, Project>(owner_cap, roles, recipient, ctx);
+    access_control::add_role<MyOwnRole, Project>(owner_cap, roles, recipient, ctx);
     }
 
     public fun do_something(owner_cap: &OwnerCap, roles: &SRoles, role_cap: &RoleCap<MyOwnRole>, ctx: &mut TxContext) {
     // Check if the sender has the Admin role
-    assert!(access_controlV2::has_cap_access<MyOwnRole>(roles, role_cap), ENotAuthorized);
+    assert!(access_control::has_cap_access<MyOwnRole>(roles, role_cap), ENotAuthorized);
     // Perform the action
     // ...
     }
 
-    public fun revoke_role(owner_cap: &OwnerCap, roles: &mut SRoles, role_id: UID, ctx: &mut TxContext) {
+    public fun revoke_role(owner_cap: &OwnerCap, roles: &mut SRoles, role_id: ID, ctx: &mut TxContext) {
     // Remove a role from the system
-    access_controlV2::revoke_role_access<Project>(owner_cap, roles, role_id);
+    access_control::revoke_role_access<Project>(owner_cap, roles, role_id);
     }
 
 }
