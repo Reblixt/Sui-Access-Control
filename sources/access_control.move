@@ -55,8 +55,8 @@ module access_control::access_control {
     // MARKETPLACE = T
     // T: key + store OwnerCap och SRoles = T
     // New Roles = R
-    public fun new<T: drop>(otw: T, ctx: &mut TxContext) {
-        assert!(sui::types::is_one_time_witness(&otw), ENotOneTimeWitness);
+    public fun new<T: drop>(otw: &T, ctx: &mut TxContext) {
+        assert!(sui::types::is_one_time_witness(otw), ENotOneTimeWitness);
         let new_sroles = object::new(ctx);
         let s_roles_id = new_sroles.to_inner();
         transfer::share_object(SRoles<T> {
@@ -151,6 +151,6 @@ module access_control::access_control {
     #[test_only]
     public(package) fun init_test(ctx: &mut TxContext) {
         let otw = ACCESS_CONTROL {};
-        new(otw, ctx);
+        new(&otw, ctx);
     }
 }
