@@ -3,10 +3,12 @@
 module access_control::access_control {
     use sui::{event::emit, vec_map::{Self, VecMap}};
 
-    public struct SRoles has key {
+    public struct SRoles<phantom T> has key {
         id: UID,
         // mapping from role capability id to bool
         role: VecMap<ID, bool>,
+        //
+        // witness: T,
     }
 
     // RoleCap is a phantom type that is used to create a new role capability
@@ -20,6 +22,9 @@ module access_control::access_control {
     public struct OwnerCap<phantom T> has key {
         id: UID,
     }
+
+    // ======================= Error ==========================
+    const ENotOneTimeWitness: u64 = 1;
 
     // ======================== Events ========================
 
@@ -47,10 +52,14 @@ module access_control::access_control {
     /// @notice The sender of the transaction will be the owner of the access control
     /// @param ctx The transaction context
     /// @return None - Creates a shared SRoles object and transfers OwnerCap to sender
-    public fun new<T>(ctx: &mut TxContext) {
+    // MARKETPLACE = T
+    // T: key + store OwnerCap och SRoles = T
+    // New Roles = R
+    public fun new<T: drop>(otw: T, ctx: &mut TxContext) {
+        assert!(sui::types::is_one_time_witness(&otw), ENotOneTimeWitness);
         let new_sroles = object::new(ctx);
         let s_roles_id = new_sroles.to_inner();
-        transfer::share_object(SRoles {
+        transfer::share_object(SRoles<T> {
             id: new_sroles,
             role: vec_map::empty(),
         });
@@ -71,13 +80,13 @@ module access_control::access_control {
     /// @param roles The shared object that contains the roles
     /// @param recipient The address that will receive the new role capability
     /// @param ctx The transaction context
-    public fun add_role<T: key, O>(
-        _: &OwnerCap<O>,
-        roles: &mut SRoles,
+    public fun add_role<T, R: key>(
+        _: &OwnerCap<T>,
+        roles: &mut SRoles<T>,
         recipient: address,
         ctx: &mut TxContext,
     ) {
-        let adminCap = RoleCap<T> { id: object::new(ctx) };
+        let adminCap = RoleCap<R> { id: object::new(ctx) };
         let adminCapId: ID = object::id(&adminCap);
 
         vec_map::insert(&mut roles.role, adminCapId, true);
@@ -95,9 +104,9 @@ module access_control::access_control {
     /// @param _ The owner capability reference
     /// @param roles The shared object that contains the roles
     /// @param adminCapId The ID of the role capability to be removed
-    public fun revoke_role_access<T: key>(
+    public fun revoke_role_access<T>(
         _: &OwnerCap<T>,
-        roles: &mut SRoles,
+        roles: &mut SRoles<T>,
         adminCapId: ID,
         ctx: &TxContext,
     ) {
@@ -115,7 +124,7 @@ module access_control::access_control {
     /// @param roles The shared object that contains the roles
     /// @param roleCap The role capability to check
     /// @return bool Returns true if the role has access, false otherwise
-    public fun has_cap_access<T: key>(roles: &SRoles, roleCap: &RoleCap<T>): bool {
+    public fun has_cap_access<T, R: key>(roles: &SRoles<T>, roleCap: &RoleCap<R>): bool {
         let roleCapId: ID = object::id(roleCap);
         vec_map::contains(&roles.role, &roleCapId)
     }
@@ -125,15 +134,23 @@ module access_control::access_control {
     /// It will remove the role capability from the roles shared object and delete the role capability
     /// @param roles The shared object that contains the roles
     /// @param roleCap The role capability to be deleted
-    entry fun delete_cap<T: key>(roles: &mut SRoles, roleCap: RoleCap<T>, ctx: &TxContext) {
+    public fun delete_cap<T, R: key>(roles: &mut SRoles<T>, roleCap: RoleCap<R>, ctx: &TxContext) {
         let roleCapId: ID = object::id(&roleCap);
         vec_map::remove(&mut roles.role, &roleCapId);
-        let RoleCap<T> { id } = roleCap;
+        let RoleCap<R> { id } = roleCap;
         object::delete(id);
 
         emit(RoleDeletedEvent {
             owner: tx_context::sender(ctx),
             roleId: roleCapId,
         });
+    }
+
+    #[test_only]
+    public struct ACCESS_CONTROL has drop {}
+    #[test_only]
+    public(package) fun init_test(ctx: &mut TxContext) {
+        let otw = ACCESS_CONTROL {};
+        new(otw, ctx);
     }
 }
