@@ -5,11 +5,11 @@ Now you need to add a Type specific to your Dapp/Project when you call the `new`
 So the ownercap is tied to the specific project. 
 
 ```rust
-    public struct Project {}
+    public struct PROJECT {}
 
-    fun init(ctx: &mut TxContext) {
+    fun init(otw: PROJECT, ctx: &mut TxContext) {
     // Initialize the access control mechanism
-    access_control::new<Project>(ctx);
+    access_control::new<PROJECT>(&otw,ctx);
     // OwnerCap is minted and transferred to the transaction sender (ctx)
     }
 ```
@@ -31,37 +31,37 @@ This module provides a straightforward way to:
 
 By leveraging this module, developers can integrate robust authorization logic directly into their Sui Move contracts, ensuring that only the right parties have permission to execute specific actions.
 ## Key Concepts
-`SRoles`
+`SRoles<T>`
 
 A shared on-chain object that maintains the state of assigned roles. It maps role capability IDs to a boolean value indicating whether the role currently has access.
 
-`OwnerCap`
+`OwnerCap<T>`
 
 A unique capability that grants the holder the authority to manage roles. Only the owner can create and revoke roles, ensuring a single source of truth for permission modifications.
 
-`RoleCap<T>`
+`RoleCap<R>`
 
 A "role capability" object parameterized by a phantom type T. Each RoleCap represents a distinct role with a unique ID. Holders of this capability demonstrate that they have a particular role and associated permissions.
 ## Core Functions
 ```rust 
 
-    new(ctx: &mut TxContext)
+    new(otw<T>, ctx: &mut TxContext)
     // Initializes the access control mechanism:
     // Creates a new shared SRoles object on-chain.
     // Mints and transfers an OwnerCap to the transaction sender.
 
-    add_role<T: key>(owner_cap: &OwnerCap, roles: &mut SRoles, recipient: address, ctx: &mut TxContext)
+    add_role<T, R: key>(owner_cap: &OwnerCap<T>, roles: &mut SRoles<T>, recipient: address, ctx: &mut TxContext)
     // Assigns a new role capability to a specified recipient. Only the holder of the 
     //OwnerCap can add new roles.
 
-    revoke_role_access(owner_cap: &OwnerCap, roles: &mut SRoles, role_id: ID)
+    revoke_role_access<T>(owner_cap: &OwnerCap<T>, roles: &mut SRoles<T>, role_id: ID)
     // Revoke a role from the access. Only the holder of the OwnerCap can remove roles. 
 
-    has_cap_access<T: key>(roles: &SRoles, role_cap: &RoleCap<T>): bool
+    has_cap_access<T, R: key>(roles: &SRoles<T>, role_cap: &RoleCap<R>): bool
     // Checks if a given role capability is currently active and has access rights. 
     // Useful for gating contract functions that should only be executed by certain roles.
 
-    delete_cap<T: key>(roles: &mut SRoles, role_cap: RoleCap<T>)
+    delete_cap<T, R: key>(roles: &mut SRoles, role_cap: RoleCap<T>)
     // Allows the holder of a role capability to voluntarily delete their 
     // RoleCap. This removes the corresponding entry from SRoles and destroys 
     // the role capability object.
@@ -77,39 +77,39 @@ A "role capability" object parameterized by a phantom type T. Each RoleCap repre
 ## Example of Usage
 
 ```rust
-module something::somethings {
+module something::project {
 use access_control::access_control::{Self, OwnerCap, RoleCap, SRoles};
 
 const ENotAuthorized: u64 = 1;
 
+    // One time witness
+    public struct PROJECT has drop {}
     // Need to have a key ability!
     public struct MyOwnRole has key {
     id: UID, 
     }
-    // Name of the project that will represent the Roles and OwnerCap
-    public struct Project {}
 
-    fun init(ctx: &mut TxContext) {
+    fun init(otw: PROJECT, ctx: &mut TxContext) {
     // Initialize the access control mechanism
-    access_control::new<Project>(ctx);
+    access_control::new<PROJECT>(&otw,ctx);
     // OwnerCap is minted and transferred to the transaction sender (ctx)
     }
 
-    public fun create_role(owner_cap: &OwnerCap<Project>, roles: &mut SRoles, recipient: address, ctx: &mut TxContext) {
+    public fun create_role(owner_cap: &OwnerCap<PROJECT>, roles: &mut SRoles<PROJECT>, recipient: address, ctx: &mut TxContext) {
     // Create a new role capability and assign it to the recipient
-    access_control::add_role<MyOwnRole, Project>(owner_cap, roles, recipient, ctx);
+    access_control::add_role<PROJECT, MyOwnRole>(owner_cap, roles, recipient, ctx);
     }
 
-    public fun do_something(owner_cap: &OwnerCap, roles: &SRoles, role_cap: &RoleCap<MyOwnRole>, ctx: &mut TxContext) {
+    public fun do_something(owner_cap: &OwnerCap<PROJECT>, roles: &SRoles<PROJECT>, role_cap: &RoleCap<MyOwnRole>, ctx: &mut TxContext) {
     // Check if the sender has the Admin role
-    assert!(access_control::has_cap_access<MyOwnRole>(roles, role_cap), ENotAuthorized);
+    assert!(access_control::has_cap_access<MARKETPLACE, MyOwnRole>(roles, role_cap), ENotAuthorized);
     // Perform the action
     // ...
     }
 
-    public fun revoke_role(owner_cap: &OwnerCap, roles: &mut SRoles, role_id: ID, ctx: &mut TxContext) {
+    public fun revoke_role(owner_cap: &OwnerCap<PROJECT>, roles: &mut SRoles<PROJECT>, role_id: ID, ctx: &mut TxContext) {
     // Remove a role from the system
-    access_control::revoke_role_access<Project>(owner_cap, roles, role_id);
+    access_control::revoke_role_access<PROJECT>(owner_cap, roles, role_id);
     }
 
 }
