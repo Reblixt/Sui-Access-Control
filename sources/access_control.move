@@ -51,10 +51,6 @@ module access_control::access_control {
     /// @notice Creates a new access control shared object and transfers ownership
     /// @notice The sender of the transaction will be the owner of the access control
     /// @param ctx The transaction context
-    /// @return None - Creates a shared SRoles object and transfers OwnerCap to sender
-    // MARKETPLACE = T
-    // T: key + store OwnerCap och SRoles = T
-    // New Roles = R
     public fun new<T: drop>(otw: &T, ctx: &mut TxContext) {
         assert!(sui::types::is_one_time_witness(otw), ENotOneTimeWitness);
         let new_sroles = object::new(ctx);
