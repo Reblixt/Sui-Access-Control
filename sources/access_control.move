@@ -51,7 +51,14 @@ module access_control::access_control {
     /// @notice Creates a new access control shared object and transfers ownership
     /// @notice The sender of the transaction will be the owner of the access control
     /// @param ctx The transaction context
-    public fun new<T: drop>(otw: &T, ctx: &mut TxContext) {
+    public fun default<T: drop>(otw: &T, ctx: &mut TxContext) {
+        transfer::transfer(new<T>(otw, ctx), ctx.sender());
+    }
+
+    /// @notice Creates a new access control shared object and transfers ownership
+    /// @param ctx The transaction context
+    /// @return OwnerCap The owner capability reference
+    public fun new<T: drop>(otw: &T, ctx: &mut TxContext): OwnerCap<T> {
         assert!(sui::types::is_one_time_witness(otw), ENotOneTimeWitness);
         let new_sroles = object::new(ctx);
         let s_roles_id = new_sroles.to_inner();
@@ -61,12 +68,12 @@ module access_control::access_control {
         });
         let new_owner_cap = object::new(ctx);
         let owner_cap_id = new_owner_cap.to_inner();
-        transfer::transfer(OwnerCap<T> { id: new_owner_cap }, tx_context::sender(ctx));
 
         emit(NewCreatedSharedRolesEvent {
             owner_cap_id,
             s_roles_id,
         });
+        OwnerCap<T> { id: new_owner_cap }
     }
 
     /// @dev Only the owner can add a new role
@@ -147,6 +154,6 @@ module access_control::access_control {
     #[test_only]
     public(package) fun init_test(ctx: &mut TxContext) {
         let otw = ACCESS_CONTROL {};
-        new(&otw, ctx);
+        default(&otw, ctx);
     }
 }
