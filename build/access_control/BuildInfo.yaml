@@ -2,14 +2,15 @@
 compiled_package_info:
   package_name: access_control
   address_alias_instantiation:
-    access_control: "0000000000000000000000000000000000000000000000000000000000000000"
+    access_control: 02321550fab9b8deed487b71314b85c8771fab33ae239ca67f9527ce367152dc
     std: "0000000000000000000000000000000000000000000000000000000000000001"
     sui: "0000000000000000000000000000000000000000000000000000000000000002"
-  source_digest: C986D90294DEE07CEA8F7DA42BEDE4C3E8C133AD4F904A03846CEA5AD4F96285
+  source_digest: C885EFF552349C3F01F2EE9D37E9D0000ED1303EB530AD32D8041FDF3E1CB4BD
   build_flags:
     dev_mode: false
     test_mode: false
     generate_docs: false
+    save_disassembly: false
     install_dir: ~
     force_recompilation: false
     lock_file: "./Move.lock"
