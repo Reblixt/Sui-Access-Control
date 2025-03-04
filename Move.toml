@@ -1,9 +1,9 @@
 [package]
 name = "access_control"
 version = "1"
-edition = "2024.beta" # edition = "legacy" to use legacy (pre-2024) Move
-license = "MIT"           # e.g., "MIT", "GPL", "Apache 2.0"
-authors = ["Reblixt/Carl Klöfverskjöld"]      # e.g., ["Joe Smith (joesmith@noemail.com)", "John Snow (johnsnow@noemail.com)"]
+edition = "2024.beta" 
+license = "MIT"       
+authors = ["Reblixt/Carl Klöfverskjöld"]
 
 [dependencies]
 Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "framework/testnet" }
@@ -20,7 +20,8 @@ Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-fram
 # Override = { local = "../conflicting/version", override = true }
 
 [addresses]
-access_control = "0x0"
+access_control = "0x06b5118385194756986c477e3a5b1cc8989c618542d39826fb30d3e9c79441e5"
+# Object upgrade cap 0x1fc678d23fe94bcb04814d1415877869b35c7446cef907d3dc89a9038af7c0cc
 
 # Named addresses will be accessible in Move as `@name`. They're also exported:
 # for example, `std = "0x1"` is exported by the Standard Library.
