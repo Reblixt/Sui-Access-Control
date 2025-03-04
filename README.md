@@ -45,10 +45,15 @@ A "role capability" object parameterized by a phantom type T. Each RoleCap repre
 ## Core Functions
 ```rust 
 
-    new(otw<T>, ctx: &mut TxContext)
+    default new<T>(otw: T, ctx: &mut TxContext)
     // Initializes the access control mechanism:
     // Creates a new shared SRoles object on-chain.
-    // Mints and transfers an OwnerCap to the transaction sender.
+    // Mints and trasferred an OwnerCap to the transaction sender.
+
+    new(otw<T>, ctx: &mut TxContext): OwnerCap<T>
+    // Initializes the access control mechanism:
+    // Creates a new shared SRoles object on-chain.
+    // Mints and returns an OwnerCap.
 
     add_role<T, R: key>(owner_cap: &OwnerCap<T>, roles: &mut SRoles<T>, recipient: address, ctx: &mut TxContext)
     // Assigns a new role capability to a specified recipient. Only the holder of the 
@@ -91,7 +96,7 @@ const ENotAuthorized: u64 = 1;
 
     fun init(otw: PROJECT, ctx: &mut TxContext) {
     // Initialize the access control mechanism
-    access_control::new<PROJECT>(&otw,ctx);
+    access_control::default<PROJECT>(&otw,ctx);
     // OwnerCap is minted and transferred to the transaction sender (ctx)
     }
 
