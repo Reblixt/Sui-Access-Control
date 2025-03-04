@@ -20,8 +20,8 @@ Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-fram
 # Override = { local = "../conflicting/version", override = true }
 
 [addresses]
-access_control = "0xea80f5a71a163cb898499f513c520728785f5162b2f9bf8c9476b6b7dc9c894b"
-# Object upgrade cap 0xa05c82aa650ababf96d5c6d53bbc986cf3a6909192d8e4cf6cfb2cc26e404bcd 
+access_control = "0x2c6debdfdf1154410889783363f885185443fedd8f91511ba489a52257246185"
+# Object upgrade cap 0x9b9b4d44bf219a0df7f69f650d8da34ee23a2b3b3b82440d9340b002046d3aa5 
 
 # Named addresses will be accessible in Move as `@name`. They're also exported:
 # for example, `std = "0x1"` is exported by the Standard Library.

@@ -7,8 +7,6 @@ module access_control::access_control {
         id: UID,
         // mapping from role capability id to bool
         role: VecMap<ID, bool>,
-        //
-        // witness: T,
     }
 
     // RoleCap is a phantom type that is used to create a new role capability
@@ -19,7 +17,7 @@ module access_control::access_control {
     }
 
     /// This is the OwnerCap if for modifie SRoles shared object
-    public struct OwnerCap<phantom T> has key {
+    public struct OwnerCap<phantom T> has key, store {
         id: UID,
     }
 
@@ -51,8 +49,9 @@ module access_control::access_control {
     /// @notice Creates a new access control shared object and transfers ownership
     /// @notice The sender of the transaction will be the owner of the access control
     /// @param ctx The transaction context
+    #[allow(lint(self_transfer))]
     public fun default<T: drop>(otw: &T, ctx: &mut TxContext) {
-        transfer::transfer(new<T>(otw, ctx), ctx.sender());
+        transfer::public_transfer(new<T>(otw, ctx), ctx.sender());
     }
 
     /// @notice Creates a new access control shared object and transfers ownership
