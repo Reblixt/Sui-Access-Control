@@ -3,9 +3,11 @@ compiled_package_info:
   package_name: access_control
   address_alias_instantiation:
     access_control: "0000000000000000000000000000000000000000000000000000000000000000"
+    bridge: 000000000000000000000000000000000000000000000000000000000000000b
     std: "0000000000000000000000000000000000000000000000000000000000000001"
     sui: "0000000000000000000000000000000000000000000000000000000000000002"
-  source_digest: 0EA75FF78EFDFF99F31997431226FD53E15E3B1BAA42BD3132AB32962341402B
+    sui_system: "0000000000000000000000000000000000000000000000000000000000000003"
+  source_digest: 6CFC432800CDDD18984B19DEFFEACC73F0060E6D81EAC5EEBC770E79BC71B69B
   build_flags:
     dev_mode: false
     test_mode: false
@@ -26,6 +28,51 @@ compiled_package_info:
     lint_flag:
       no_lint: false
       lint: false
+    modes: []
+    implicit_dependencies:
+      Bridge:
+        Internal:
+          kind:
+            Git:
+              git_url: "https://github.com/MystenLabs/sui.git"
+              git_rev: 664b05b3b047c5bb03979d093660176176ea6175
+              subdir: crates/sui-framework/packages/bridge
+          subst: ~
+          digest: ~
+          dep_override: true
+      MoveStdlib:
+        Internal:
+          kind:
+            Git:
+              git_url: "https://github.com/MystenLabs/sui.git"
+              git_rev: 664b05b3b047c5bb03979d093660176176ea6175
+              subdir: crates/sui-framework/packages/move-stdlib
+          subst: ~
+          digest: ~
+          dep_override: true
+      Sui:
+        Internal:
+          kind:
+            Git:
+              git_url: "https://github.com/MystenLabs/sui.git"
+              git_rev: 664b05b3b047c5bb03979d093660176176ea6175
+              subdir: crates/sui-framework/packages/sui-framework
+          subst: ~
+          digest: ~
+          dep_override: true
+      SuiSystem:
+        Internal:
+          kind:
+            Git:
+              git_url: "https://github.com/MystenLabs/sui.git"
+              git_rev: 664b05b3b047c5bb03979d093660176176ea6175
+              subdir: crates/sui-framework/packages/sui-system
+          subst: ~
+          digest: ~
+          dep_override: true
+    force_lock_file: false
 dependencies:
+  - Bridge
   - MoveStdlib
   - Sui
+  - SuiSystem

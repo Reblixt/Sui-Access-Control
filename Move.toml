@@ -5,9 +5,7 @@ edition = "2024.beta"
 license = "MIT"       
 authors = ["Reblixt/Carl Klöfverskjöld"]
 
-[dependencies]
-Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "framework/mainnet" }
-
+[dependencies] 
 # For remote import, use the `{ git = "...", subdir = "...", rev = "..." }`.
 # Revision can be a branch, a tag, and a commit hash.
 # MyRemotePackage = { git = "https://some.remote/host.git", subdir = "remote/path", rev = "main" }
@@ -20,8 +18,8 @@ Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-fram
 # Override = { local = "../conflicting/version", override = true }
 
 [addresses]
-access_control = "0xeb04131cc0b54fb5d50d48113a734d95f7c5ff30a2c1021cf259f3f77accd2fc"
-# Object upgrade cap 0xe9a96a6e7ddec1badec4df7f88a03a6d2674a0fd959432f76075d4281bcb80c6 
+access_control = "0x506d979252eea6a3e8d270f46e64a5bd49407a31b83ba7ef2be300cc098aca83"
+# Object upgrade cap 0x84b0838c15efaff1efe1ceb3e9ac90a6357d657097373a4be9b2ce651270fefb 
 
 # Named addresses will be accessible in Move as `@name`. They're also exported:
 # for example, `std = "0x1"` is exported by the Standard Library.

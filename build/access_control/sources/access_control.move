@@ -91,12 +91,13 @@ module access_control::access_control {
         let adminCap = RoleCap<R> { id: object::new(ctx) };
         let adminCapId: ID = object::id(&adminCap);
 
-        vec_map::insert(&mut roles.role, adminCapId, true);
+        roles.role.insert(adminCapId, true);
+        sui::dynamic_field::add(&mut roles.id, adminCapId, recipient);
 
         transfer::transfer(adminCap, recipient);
 
         emit(RoleAddedEvent {
-            owner: tx_context::sender(ctx),
+            owner: recipient,
             roleId: adminCapId,
         });
     }
@@ -110,12 +111,13 @@ module access_control::access_control {
         _: &OwnerCap<T>,
         roles: &mut SRoles<T>,
         adminCapId: ID,
-        ctx: &TxContext,
+        _: &TxContext,
     ) {
-        vec_map::remove(&mut roles.role, &adminCapId);
+        roles.role.remove(&adminCapId);
+        let owner = sui::dynamic_field::borrow<ID, address>(&roles.id, adminCapId);
 
         emit(RoleRevokedEvent {
-            owner: tx_context::sender(ctx),
+            owner: *owner,
             roleId: adminCapId,
         });
     }
@@ -127,8 +129,7 @@ module access_control::access_control {
     /// @param roleCap The role capability to check
     /// @return bool Returns true if the role has access, false otherwise
     public fun has_cap_access<T, R: key>(roles: &SRoles<T>, roleCap: &RoleCap<R>): bool {
-        let roleCapId: ID = object::id(roleCap);
-        vec_map::contains(&roles.role, &roleCapId)
+        roles.role.contains(roleCap.id.as_inner())
     }
 
     /// @notice Deletes a role capability
@@ -136,14 +137,15 @@ module access_control::access_control {
     /// It will remove the role capability from the roles shared object and delete the role capability
     /// @param roles The shared object that contains the roles
     /// @param roleCap The role capability to be deleted
-    public fun delete_cap<T, R: key>(roles: &mut SRoles<T>, roleCap: RoleCap<R>, ctx: &TxContext) {
-        let roleCapId: ID = object::id(&roleCap);
-        vec_map::remove(&mut roles.role, &roleCapId);
+    public fun delete_cap<T, R: key>(roles: &mut SRoles<T>, roleCap: RoleCap<R>, _: &TxContext) {
+        let roleCapId: ID = roleCap.id.to_inner();
+        roles.role.remove(&roleCapId);
         let RoleCap<R> { id } = roleCap;
-        object::delete(id);
+        id.delete();
+        let owner = sui::dynamic_field::remove<ID, address>(&mut roles.id, roleCapId);
 
         emit(RoleDeletedEvent {
-            owner: tx_context::sender(ctx),
+            owner: owner,
             roleId: roleCapId,
         });
     }

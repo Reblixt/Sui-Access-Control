@@ -8,7 +8,8 @@ module access_control::access_control_tests {
         init_test,
         ACCESS_CONTROL
     };
-    use sui::{test_scenario::{Self as scen, begin, end, ctx}, test_utils::assert_eq};
+    use std::unit_test::assert_eq;
+    use sui::test_scenario::{Self as scen, begin, end, ctx};
 
     const OWNER: address = @0xA;
     const ADMIN: address = @0xB;
@@ -86,7 +87,7 @@ module access_control::access_control_tests {
             &s_roles,
             &adminCap,
         );
-        assert_eq(tructhy_admin, true);
+        assert_eq!(tructhy_admin, true);
 
         scen::next_tx(&mut scenario, OWNER);
         controll::revoke_role_access(&oc, &mut s_roles, adminCapId, ctx(&mut scenario));
@@ -96,7 +97,7 @@ module access_control::access_control_tests {
             &s_roles,
             &adminCap,
         );
-        assert_eq(falsy_admin, false);
+        assert_eq!(falsy_admin, false);
 
         // Return the resources
         scen::return_shared(s_roles);
@@ -134,7 +135,7 @@ module access_control::access_control_tests {
             &s_roles,
             &adminCap,
         );
-        assert_eq(tructhy_admin, true);
+        assert_eq!(tructhy_admin, true);
 
         scen::next_tx(&mut scenario, OWNER);
 
